@@ -12,6 +12,8 @@ syntax is as follows:
         will download pg7.epub to the current directory
 > gutenpress get txt.utf8 search '/science/ && !/science fiction/'
         will download some non-scifi science things
+> gutenpress update
+        will update the catalog.tsv from the gitorious repo
 
 you can use any awk expression pattern for a search, but dont expect all tricky quote escaping to work because it may fail.
 

@@ -8,7 +8,10 @@ if [[ ! -f $catalog ]] ; then
     exit 3
 fi
 
-if [[ "$1" == search ]] ; then
+if [[ "$1" == update ]] ; then
+    wget -O - https://gitorious.org/gutenpress/gutenpress/archive-tarball/master | tar -xzOf - gutenpress-gutenpress/catalog.tsv > $catalog
+    exit $?
+elif [[ "$1" == search ]] ; then
     awk 'BEGIN { IGNORECASE=1 } '"$2"' { print $0 }' <$catalog| tr '\t' '\n'
 elif [[ "$1" == numbers ]] ; then
     awk 'BEGIN { IGNORECASE=1 } '"$(echo $2 | tr -s ' ' '\n' | sed 's_\([0-9]*\)_/001:\1\\t/\n||_' | sed -e '$ {d}' | tr '\n' ' ')"' { print $0 }' <$catalog| tr '\t' '\n'
