@@ -1,0 +1,85 @@
+#!/bin/sh
+#copyright 2013 <lutostag@gmail.com>
+#this program is licensed under CC0
+catalog=$HOME/play/guten/catalog.tsv
+
+if [[ ! -f $catalog ]] ; then
+    echo "Catalog not found!" 1>&2
+    exit 3
+fi
+
+if [[ "$1" == search ]] ; then
+    awk 'BEGIN { IGNORECASE=1 } '"$2"' { print $0 }' <$catalog| tr '\t' '\n'
+elif [[ "$1" == numbers ]] ; then
+    awk 'BEGIN { IGNORECASE=1 } '"$(echo $2 | tr -s ' ' '\n' | sed 's_\([0-9]*\)_/001:\1\\t/\n||_' | sed -e '$ {d}' | tr '\n' ' ')"' { print $0 }' <$catalog| tr '\t' '\n'
+elif [[ "$1" == get ]] ; then
+    if [[ "$2" == epub || "$2" == mobi || "$2" == plucker.pdb || "$2" == qioo.jar || $2 == txt.utf8 ]] ; then
+        list=""
+        if [[ "$3" == search ]] ; then
+            list=$(awk 'BEGIN { IGNORECASE=1 } '"$4"' { sub(/001:/,"",$1); print $1 }' <$catalog | tr '\t' '\n')
+        elif [[ "$3" == numbers ]] ; then
+            list=$(awk 'BEGIN { IGNORECASE=1 } '"$(echo $4 | tr -s ' ' '\n' | sed 's_\([0-9]*\)_/001:\1\\t/\n||_' | sed '$ {d}' | tr '\n' ' ')"' { sub(/001:/,"",$1); print $1 }' <$catalog | tr '\t' '\n')
+        else
+            echo "Wrong syntax" 1>&2
+            exit 2
+        fi
+        exitnum=0
+        for number in $list
+        do
+            url=$(echo $number | sed "s_\(.*\)_ftp://gutenberg.readingroo.ms/gutenberg/cache/generated/\1/pg\1.$2_")
+            echo "STARTING DOWNLOAD FOR EBOOK #$number"
+            wget -qc $url && echo -e "\tCOMPLETED DOWNLOAD FOR EBOOK #$number" || (echo -e "\tFAILED DOWNLOAD FOR EBOOK #$number"; exit 1)
+            exitnum=$(($exitnum?1:$?))
+        done
+        exit $exitnum
+    else
+        echo "Wrong get type" 1>&2
+        exit 2
+    fi
+else
+    echo "Wrong syntax" 1>&2
+    exit 2
+fi
+
+#syntax is as follows:
+#> guten search '/science fiction/ && /short stories/ && !/Electronic text/'
+#       will show those records that contain science fiction, short stories, and are not etexts
+#> guten numbers '5 6'
+#       will show the records of books 5, 6
+#which should be the same as
+#>guten search '/001:5\t/ || /001:6\t/'
+#       AND YES THE SINGLE QUOTES ARE NECESSARY
+#> guten get epub numbers '7'
+#       will download pg7.epub to the current directory
+#> guten get txt.utf8 search '/science/ && !/science fiction/'
+#       will download some non-scifi science things
+#
+#please search before you blindly download or you may end up with a LOT of files
+#currently the only filetypes I want to download are {epub, mobi, plucker.pdb, qioo.jar, txt.utf8} you can allow downloading of other types by just changing the if statement on line 10 to include what you want
+
+
+
+#requires awk,sed,sh,wget,and some other normal unix utils (busybox is enough)
+#also a file called catalog.tsv that has \t field delimiters (is also used to differentiate subtitles) and \n record delimiters which can be generated from a bunzip'd http://www.gutenberg.org/feeds/catalog.marc.bz2 with the following perl script:
+
+##!/usr/bin/perl
+#use strict;
+#use warnings;
+#use MARC::Batch;
+#binmode(STDOUT, ":utf8");
+#my $batch = MARC::Batch->new('USMARC','catalog.marc');
+#while (my $record = $batch->next()) {
+#    my @fields = $record->fields();
+#    foreach my $field (@fields) {
+#        $field_strip = $field->as_string();
+#        $field_strip =~ s/\n/\t/g;
+#        print $field->tag(),":",$field_strip,"\t";
+#    }
+#    print "\n";
+#}
+#if ( my @warnings = $batch->warnings() ) {
+#    print STDERR "\nWarnings were detected!\n", @warnings;
+#}
+##this perl script needs the cpan module MARC::Record from http://search.cpan.org/~gmcharlt/MARC-Record-2.0.5/
+##should be run by: wget -O - http://www.gutenberg.org/feeds/catalog.marc.bz2 | bzcat | perl THISSCRIPT > catalog.txt0
+
