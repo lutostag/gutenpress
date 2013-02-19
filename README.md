@@ -31,3 +31,8 @@ gutenmarc.pl needs the cpan module MARC::Record from http://search.cpan.org/~gmc
 
 
 also feel free to change the mirror used from gutenberg.readingroo.ms to anyother mirror that supports generated caches.
+
+LICENSING:
+catalog.tsv is licensed under the GPL (https://www.gnu.org/licenses/gpl.html) because it is a derivative work of the gutenberg catalog.
+gutenpress is licensed under CC0 (https://creativecommons.org/publicdomain/zero/1.0/).
+gutenmarc.pl is licensed the same as MARC::Record as it is a derivative work from one of the examples (same license as Perl (http://dev.perl.org/licenses/)).
