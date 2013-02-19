@@ -27,4 +27,7 @@ requires awk,sed,sh,wget,and some other normal unix utils (busybox is enough)
 also a file called catalog.tsv is needed that has \t field delimiters and \n record delimiters which can be generated from a bunzip'd http://www.gutenberg.org/feeds/catalog.marc.bz2 with the following perl script gutenmarc.pl, which might be run as follows:
 wget -O - http://www.gutenberg.org/feeds/catalog.marc.bz2 | bzcat | perl gutenmarc.pl > catalog.tsv
 
+gutenmarc.pl needs the cpan module MARC::Record from http://search.cpan.org/~gmcharlt/MARC-Record-2.0.5/
+
+
 also feel free to change the mirror used from gutenberg.readingroo.ms to anyother mirror that supports generated caches.
