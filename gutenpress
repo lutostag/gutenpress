@@ -9,7 +9,7 @@ if [[ ! -f $catalog ]] ; then
 fi
 
 if [[ "$1" == update ]] ; then
-    wget -O - https://gitorious.org/gutenpress/gutenpress/archive-tarball/master | tar -xzOf - gutenpress-gutenpress/catalog.tsv > $catalog
+    wget -O - https://gitorious.org/gutenpress/gutenpress/archive-tarball/master | zcat | tar -xOf - gutenpress-gutenpress/catalog.tsv > $catalog
     exit $?
 elif [[ "$1" == search ]] ; then
     awk 'BEGIN { IGNORECASE=1 } '"$2"' { print $0 }' <$catalog| tr '\t' '\n'
