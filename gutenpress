@@ -1,5 +1,5 @@
 #!/bin/sh
-#copyright 2013 <lutostag@gmail.com>
+#copyright 2013 <greg.luto@gmail.com>
 #this program is licensed under CC0
 catalog=$HOME/play/guten/catalog.tsv
 
