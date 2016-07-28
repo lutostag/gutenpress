@@ -1,20 +1,21 @@
 An offline gutenberg catalog searcher and downloader.
 
 syntax is as follows:
-> gutenpress search '/science fiction/ && /short stories/ && !/Electronic text/'
+```
+$ gutenpress search '/science fiction/ && /short stories/ && !/Electronic text/'
         will show those records that contain science fiction, short stories, and are not etexts
-> gutenpress numbers '5 6'
+$ gutenpress numbers '5 6'
         will show the records of books 5, 6
         which should be the same as
-> gutenpress search '/001:5\t/ || /001:6\t/'
+$ gutenpress search '/001:5\t/ || /001:6\t/'
         AND YES THE SINGLE QUOTES ARE NECESSARY
-> gutenpress get epub numbers '7'
+$ gutenpress get epub numbers '7'
         will download pg7.epub to the current directory
-> gutenpress get txt.utf8 search '/science/ && !/science fiction/'
+$ gutenpress get txt.utf8 search '/science/ && !/science fiction/'
         will download some non-scifi science things
-> gutenpress update
+$ gutenpress update
         will update the catalog.tsv from the gitorious repo
-
+```
 you can use any awk expression pattern for a search, but dont expect all tricky quote escaping to work because it may fail.
 
 please search before you blindly download or you may end up with a LOT of files
